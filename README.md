@@ -59,4 +59,3 @@ Servlet, JSP, JDBC 기반 Java 웹 학습 프로젝트
 → JDBC 기반 MySQL 연동
 → JSP 기반 View 구성
 → DB 접속 설정 외부화
-```
