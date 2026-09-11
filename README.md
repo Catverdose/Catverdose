@@ -44,6 +44,15 @@ Redis, Kafka, 성능 테스트, CI/CD와 AWS 배포까지 경험했습니다.
 - 20,000건 동시 요청에서 초과·중복 발급 0건 검증
 - GitHub Actions와 AWS EC2 기반 CI/CD 경험
 
+### Vector DB Benchmark
+
+FAQ RAG에 사용할 Vector DB 선정을 위한 비교 실험
+
+* pgvector, Qdrant, Weaviate, Milvus, OpenSearch 비교
+* 동일한 BGE-M3 임베딩과 Recall@10 기준으로 p95 latency, QPS, 자원 사용량 측정
+* 14개 DB / engine / index 조합을 반복 실행해 성능과 안정성 검증
+* 실제 서비스 규모보다 큰 10,000개 벡터 조건에서 후보별 특성 비교
+
 ### [Planly](https://github.com/Catverdose/planly-web)
 Todo와 공유 캘린더를 연결한 일정 관리 서비스
 
