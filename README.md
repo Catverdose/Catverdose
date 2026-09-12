@@ -44,9 +44,9 @@ Redis, Kafka, 성능 테스트, CI/CD와 AWS 배포까지 경험했습니다.
 - 20,000건 동시 요청에서 초과·중복 발급 0건 검증
 - GitHub Actions와 AWS EC2 기반 CI/CD 경험
 
-### [Vector DB Benchmark](https://github.com/ureca-final-project-temp/UBot-VertorDBTest)
+### [Vector DB Test](https://github.com/ureca-final-project-temp/UBot-VertorDBTest)
 
-FAQ RAG에 사용할 Vector DB 선정을 위한 비교 실험
+FAQ RAG에 사용할 Vector DB 선정을 위한 비교 테스트
 
 * pgvector, Qdrant, Weaviate, Milvus, OpenSearch 비교
 * 동일한 BGE-M3 임베딩과 Recall@10 기준으로 p95 latency, QPS, 자원 사용량 측정
