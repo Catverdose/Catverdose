@@ -4,6 +4,8 @@
 **실패했을 때 데이터와 시스템 상태가 어긋날 수 있는 경계**를 파고듭니다.
 기능이 동작하는 데서 끝내지 않고, 재현 가능한 테스트와 측정으로 정합성을 확인합니다.
 
+**Contact** · [eongpup@gmail.com](mailto:eongpup@gmail.com)
+
 ---
 
 ## Projects
