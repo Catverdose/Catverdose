@@ -56,7 +56,7 @@
 
 ## Other
 
-- **[Planly](https://github.com/Catverdose/planly-web)** — Todo와 공유 Calendar를 연결한 서비스. 팀 미니 프로젝트를 이어받아 backend/frontend 분리, JWT 인증·소유권 검증, 검색·필터·페이지네이션, Todo–Schedule 연동 구현
+- **[Planly](https://github.com/Catverdose/planly-web)** — Todo와 공유 Calendar를 연결한 서비스. 팀 미니 프로젝트를 이어받아 backend/frontend 분리, 검색·필터·페이지네이션, Todo–Schedule 연동 구현
 
 ---
 
