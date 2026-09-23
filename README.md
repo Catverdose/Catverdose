@@ -1,119 +1,65 @@
-# Backend Developer
+# Backend Developer · Java / Spring
 
-Java와 Spring을 중심으로 백엔드 시스템을 개발하고 있습니다.
-
-동시 수정, 비동기 처리, 실시간 스트리밍처럼  
-**실패했을 때 데이터와 시스템 상태가 달라질 수 있는 경계**를 주로 파고듭니다.
-
-구현한 기능이 동작하는 것에서 끝내지 않고,  
-재현 가능한 테스트와 측정을 통해 정합성·실패 상태·운영 영향을 확인하려고 합니다.
+동시 수정, 비동기 처리, 실시간 스트리밍처럼
+**실패했을 때 데이터와 시스템 상태가 어긋날 수 있는 경계**를 파고듭니다.
+기능이 동작하는 데서 끝내지 않고, 재현 가능한 테스트와 측정으로 정합성을 확인합니다.
 
 ---
 
-## Focus
+## Projects
 
-- **Data Consistency** — transaction boundary, DB constraint, concurrency control
-- **Failure Handling** — async processing, scheduler, SSE, recovery
-- **Verification** — integration test, regression test, benchmark
-- **Backend Infrastructure** — Docker, Testcontainers, CI/CD, observability
+### [PetCoupon](https://github.com/PetCare-Platform/petcoupon-backend) — 선착순 쿠폰 발급 시스템
 
----
+`팀 프로젝트` · 담당: 이벤트·쿠폰 관리, 관리자 운영·모니터링 · [Merged PR 24개](https://github.com/PetCare-Platform/petcoupon-backend/pulls?q=is%3Apr+is%3Amerged+author%3ACatverdose)
 
-## Selected Work
+- **관리자 수정 ↔ 발급·스케줄러 경합** — 같은 쿠폰을 동시에 건드리는 경로를 `PESSIMISTIC_WRITE`로 직렬화하고, 락 획득 순서를 통일해 교착을 막음
+- **SSE 오류 feedback loop 제거** — client disconnect → 예외 로깅 → 그 로그가 다시 SSE로 전송 → 또 실패로 이어지는 순환을 추적해 끊고, 구독자별 Queue로 느린 client를 격리
+- **조회 경로 분리** — 목록/실시간 조회의 데이터 소스를 나누고, 실제 실행 SQL 수를 테스트로 고정
 
-### [PetCoupon](https://github.com/PetCare-Platform/petcoupon-backend)
-**Team Project · 24 Merged PRs**
-
-선착순 쿠폰 발급 시스템에서  
-**이벤트·쿠폰 관리와 관리자 운영·모니터링 영역**을 담당했습니다.
-
-- 관리자 쿠폰 수정과 발급·스케줄러 간 경쟁을 `PESSIMISTIC_WRITE`와 일관된 lock order로 제어
-- 이벤트·쿠폰 상태 전이를 조건부 UPDATE 기반 scheduler로 구현
-- Redis 기반 관리자 세션 인증과 만료·폐기 구조 구현
-- 관리자 SSE 모니터링에서 client disconnect → exception handler → logging → SSE로 이어지는 오류 feedback loop 추적 및 제거
-- 구독자별 Queue로 느린 SSE client의 영향을 격리하고 로그 마스킹 비용을 제한
-- 목록과 실시간 조회의 데이터 소스를 분리하고 실제 SQL 수를 테스트로 검증
-
-**Team validation**  
-20,000-request load test · overselling / duplicate issuance 0 · 1,030 TPS
+> 팀 전체 검증: 20,000 요청 부하 테스트 · 초과/중복 발급 0건 · 1,030 TPS
 
 ---
 
-### [Engineering Memory](https://github.com/Catverdose/engineering-memory)
-**Personal Project · Ongoing**
+### [Engineering Memory](https://github.com/Catverdose/engineering-memory) — 개인 개발 기록 기반 RAG
 
-개발 문서를 저장하고 검색·대화할 수 있는 개인 RAG 시스템입니다.
+`개인 프로젝트` · Phase 1 완료 · 근거 문서가 없으면 답하지 않고 `NO_CONTEXT`를 반환하는 지식 어시스턴트 · [Architecture](https://github.com/Catverdose/engineering-memory/blob/main/docs/architecture.md)
 
-`Browser → Nginx → Go Gateway → Spring Boot → PostgreSQL / pgvector → Ollama`
+`Browser → Nginx → Go Gateway → Spring Boot → PostgreSQL/pgvector → Ollama`
 
-- 비동기 문서 색인 중 수정된 문서가 과거 embedding 결과로 덮이지 않도록 `version / indexing attempt` 검증
-- `PENDING / READY / FAILED` 상태와 bounded queue, 작업 coalescing, 재기동 복구 구성
-- 사용자 메시지와 `GENERATING` 상태를 먼저 저장해 LLM 처리 중 장애가 발생해도 대화 상태 복구 가능
-- 검색 근거가 없으면 `NO_CONTEXT`로 처리해 불필요한 LLM 호출 차단
-- owner 조건과 복합 FK를 통해 애플리케이션과 DB 양쪽에서 데이터 격리
-
-`Java 21 · Spring Boot · PostgreSQL · pgvector · Go · Docker · Ollama`
+- **오래된 색인 결과의 덮어쓰기 방지** — 비동기 색인 중 문서가 수정되면 `version / indexing attempt`를 비교해 과거 embedding 결과를 버림. bounded queue·작업 coalescing·재기동 복구로 `PENDING / READY / FAILED` 상태 유지
+- **LLM 장애 시 대화 복구** — 사용자 메시지와 `GENERATING` 상태를 먼저 저장한 뒤 생성을 호출해, 처리 중 장애가 나도 대화 상태를 되살림
+- **데이터 격리를 DB까지** — owner 조건(애플리케이션) + 복합 FK(DB)로 사용자 간 데이터 참조를 이중으로 차단
 
 ---
 
-### [Vector DB Benchmark](https://github.com/ureca-UBot/UBot-VertorDBTest)
-**Benchmark / Experiment**
+### [Vector DB Benchmark](https://github.com/ureca-UBot/UBot-VertorDBTest) — RAG용 Vector DB 선정 실험
 
-RAG 서비스의 Vector DB 후보를  
-**같은 검색 품질과 자원 조건에서 비교하기 위한 benchmark harness**를 구현했습니다.
+`Benchmark / Experiment`
 
-- pgvector · Qdrant · Weaviate · Milvus · OpenSearch
-- BGE-M3 dense 1024d · cosine · Top-K 10
-- Java exact cosine search를 Ground Truth로 사용해 Recall@10 계산
-- latency · QPS · CPU · RAM · index readiness 측정
-- DB / Engine / Index 14개 구성
-- 검색 설정 124개 × 독립 재구축 5회 = **620 measurements**
-- calibration / evaluation query 분리 및 입력 SHA-256 고정
-- 측정 이상치와 warm-up 미달을 제거하지 않고 원시 결과와 warning으로 보존
-
-단일 latency 수치로 제품을 고르지 않고,  
-필요한 Recall 수준에서 성능·자원·운영 복잡도를 함께 비교했습니다.
+- **비교 조건 고정** — pgvector · Qdrant · Weaviate · Milvus · OpenSearch를 BGE-M3 1024d · cosine · Top-10 · 동일 자원 제한에서 비교. Java exact cosine search를 Ground Truth로 Recall@10 산출
+- **측정 신뢰성** — DB/Engine/Index 14개 구성, 검색 설정 124개 × 독립 재구축 5회 = 620 measurements. calibration/evaluation query 분리, 입력 SHA-256 고정, 이상치는 지우지 않고 warning으로 보존
 
 ---
 
-### [UBot Backend](https://github.com/ureca-UBot/UBot-BE)
-**Team Project · Backend Infrastructure**
+### [UBot Backend](https://github.com/ureca-UBot/UBot-BE) — 통신 상담 RAG 챗봇
 
-통신 상담용 RAG 챗봇 백엔드에서  
-팀이 같은 환경에서 개발·테스트할 수 있는 실행 기반을 담당했습니다.
+`팀 프로젝트` · 담당: 팀 개발·테스트 실행 기반
 
-- PostgreSQL + pgvector + PostGIS + Ollama 개발 환경 구성
-- Testcontainers로 테스트마다 독립 DB를 생성해 개발 DB와 테스트 환경 격리
-- 로컬 Compose와 CI가 동일한 PostgreSQL Dockerfile 사용
-- Flyway에서 pgvector / PostGIS extension 생성 책임 통일
-- 실제 vector 저장·검색과 PostGIS spatial function을 CI에서 검증
-- Java 21 multi-stage Docker image 및 배포용 Compose 구성
-
-`Java 21 · Spring Boot · PostgreSQL · pgvector · PostGIS · Flyway · Testcontainers · Docker`
+- **테스트 격리** — Testcontainers로 테스트마다 독립 DB를 만들어 개발 DB와 분리
+- **환경 차이 제거** — 로컬 Compose와 CI가 같은 PostgreSQL Dockerfile을 쓰고, pgvector/PostGIS extension 생성 책임을 Flyway로 일원화
+- **CI에서 실제 기능 검증** — 실제 vector 저장·검색과 PostGIS spatial function을 CI에서 실행
 
 ---
 
-## Other Experience
+## Other
 
-**[Planly](https://github.com/Catverdose/planly-web)**  
-Todo와 공유 Calendar를 연결한 Spring/JPA 웹 서비스.  
-JWT 인증, 소유권 검증, 검색·필터·페이지네이션, Todo–Schedule 연동을 구현했습니다.
-
-**[Coupon Concurrency Experiment](https://github.com/PetCare-Platform/coupon-concurrency-experiment)**  
-선착순 쿠폰 문제에서 Direct / Pessimistic Lock 구현과 실험 문서화를 담당했고, 이후 개인적으로 동시성 제어 전략 비교 실험을 확장했습니다.
-
-**[Java Web Fundamentals](https://github.com/Catverdose/memo-servlet-jsp)**  
-Servlet → Service → DAO → JDBC 흐름과 JDBC transaction을 직접 구현하며 Spring 이전의 Java Web 요청 흐름을 학습했습니다.
+- **[Coupon Concurrency Experiment](https://github.com/PetCare-Platform/coupon-concurrency-experiment)** — 선착순 쿠폰의 동시성 제어 전략을 같은 조건에서 비교. Direct·Pessimistic Lock 구현과 실험 문서화 담당, 이후 개인적으로 비교 실험 확장
+- **[Planly](https://github.com/Catverdose/planly-web)** — Todo와 공유 Calendar를 연결한 서비스. 팀 미니 프로젝트를 이어받아 backend/frontend 분리, JWT 인증·소유권 검증, 검색·필터·페이지네이션, Todo–Schedule 연동 구현
 
 ---
 
 ## Tech
 
-**Core**  
-Java 21 · Spring Boot · JPA · MySQL · PostgreSQL
+**주력** · Java 21 · Spring Boot · JPA · PostgreSQL · MySQL
 
-**Data / Infrastructure**  
-Redis · pgvector · PostGIS · Docker · Testcontainers · Flyway · GitHub Actions
-
-**Project Experience**  
-Kafka · SSE · Nginx · Ollama · k6 · JUnit · Awaitility
+**사용 경험** · Redis · pgvector · PostGIS · Flyway · Docker · Testcontainers · GitHub Actions · SSE · Nginx · Go · Ollama · k6
