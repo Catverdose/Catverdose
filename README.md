@@ -18,7 +18,8 @@
 
 - **비동기 채팅과 작업 복구** ([#214](https://github.com/ureca-UBot/UBot-BE/pull/214) · [#281](https://github.com/ureca-UBot/UBot-BE/pull/281) · [#289](https://github.com/ureca-UBot/UBot-BE/pull/289)) — API 접수(202·jobId)와 Worker 실행을 분리. DB 작업 원장과 Redis Streams 알림, heartbeat·펜싱·커밋 후 ACK로 장애 복구 경계를 관리하고 실행·복구 책임을 분리
 - **배포 실패 후 Worker 자동 복구** ([#318](https://github.com/ureca-UBot/UBot-BE/pull/318)) — CD 중단으로 Worker가 사라지면 독립 systemd 타이머가 배포·API 상태를 확인해 같은 이미지 digest로 복구. 강제 중단 시나리오는 로컬 Linux에서 검증
-- **벡터 검색·운영 관측** ([#251](https://github.com/ureca-UBot/UBot-BE/pull/251) · [#268](https://github.com/ureca-UBot/UBot-BE/pull/268)) — FAQ 검색을 HNSW로 전환해 합성 1만 건 기준 p50 4.6~6.2배 개선을 관측. Worker·LLM·검색·DB·Redis 지표 추가
+- **AWS 인프라·CI/CD** ([#133](https://github.com/ureca-UBot/UBot-BE/pull/133) · [#261](https://github.com/ureca-UBot/UBot-BE/pull/261) · [#306](https://github.com/ureca-UBot/UBot-BE/pull/306)) — Terraform으로 네트워크·EC2·GPU 인프라를 코드화하고, GitHub Actions OIDC → ECR → SSM 배포 파이프라인 구성. 실제 AWS 배포와 GPU 테스트 자원 생성·삭제를 검증
+- **벡터 검색·운영 관측** ([#251](https://github.com/ureca-UBot/UBot-BE/pull/251) · [#268](https://github.com/ureca-UBot/UBot-BE/pull/268) · [#274](https://github.com/ureca-UBot/UBot-BE/pull/274)) — FAQ 검색을 HNSW로 전환해 합성 1만 건 기준 p50 4.6~6.2배 개선을 관측. Worker·LLM·검색·DB·Redis 지표와 장애 알림 구성
 - **LLM 호출 전 입력 차단** ([#104](https://github.com/ureca-UBot/UBot-BE/pull/104)) — 금지어를 임베딩·LLM 호출 전에 검사하고, 활성 금지어 캐시는 변경 트랜잭션 커밋 이후 갱신
 - **비회원 채팅과 횟수 제한** ([#113](https://github.com/ureca-UBot/UBot-BE/pull/113) · [#131](https://github.com/ureca-UBot/UBot-BE/pull/131)) — HttpSession으로 게스트를 구분하고, 대화 행 잠금으로 동시 요청에도 질문 횟수 상한을 유지
 - **모델 서버 전환** ([#146](https://github.com/ureca-UBot/UBot-BE/pull/146) · [#150](https://github.com/ureca-UBot/UBot-BE/pull/150) · [#153](https://github.com/ureca-UBot/UBot-BE/pull/153)) — Ollama·vLLM 구현체를 설정으로 선택하고 공통 계약 테스트로 검증. 모델별 벡터 Profile 분리
