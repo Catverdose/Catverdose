@@ -14,11 +14,12 @@
 
 ### [UBot](https://github.com/ureca-UBot/UBot-BE) — 통신 상담 RAG 챗봇
 
-`팀 프로젝트` · 담당: 비동기 채팅·장애 복구, AWS/GPU 인프라·배포, 운영 관측·부하 검증, 모델 전환·입력 보호·게스트 채팅 · Merged PR [백엔드](https://github.com/ureca-UBot/UBot-BE/pulls?q=is%3Apr+is%3Amerged+author%3ACatverdose) · [프론트](https://github.com/ureca-UBot/UBot-FE/pulls?q=is%3Apr+is%3Amerged+author%3ACatverdose)
+`팀 프로젝트` · 담당: 비동기 채팅·장애 복구, AWS/GPU 인프라·배포·네트워크 접근 제어, 운영 관측·부하 검증, 모델 전환·입력 보호·게스트 채팅 · Merged PR [백엔드](https://github.com/ureca-UBot/UBot-BE/pulls?q=is%3Apr+is%3Amerged+author%3ACatverdose) · [프론트](https://github.com/ureca-UBot/UBot-FE/pulls?q=is%3Apr+is%3Amerged+author%3ACatverdose)
 
 - **Spot GPU 교체를 고려한 비동기 채팅** ([#214](https://github.com/ureca-UBot/UBot-BE/pull/214) · [#281](https://github.com/ureca-UBot/UBot-BE/pull/281)) — API 접수(`202 + jobId`)와 Java Worker의 답변 생성을 분리. 작업 상태는 PostgreSQL, 전달은 Redis Streams에 두어 NLB 뒤 Spot GPU의 증감·교체와 분리. 모델 연결 실패·5xx는 같은 HTTP 호출만 작업 마감 내 재시도
 - **다중 Worker의 작업 소유권·복구** ([#214](https://github.com/ureca-UBot/UBot-BE/pull/214) · [#289](https://github.com/ureca-UBot/UBot-BE/pull/289)) — Consumer Group과 `QUEUED → RUNNING` 조건부 선점, heartbeat·`started_at` 펜싱으로 여러 Worker의 중복 최종 저장을 방지. DB 커밋 후 ACK, Redis 메시지 유실 시 DB 기준 재발행
 - **AWS/GPU 인프라 코드화** ([#133](https://github.com/ureca-UBot/UBot-BE/pull/133) · [#306](https://github.com/ureca-UBot/UBot-BE/pull/306)) — Terraform으로 실험용 Spot GPU 생성·삭제를 검증하고 기존 AWS PoC 자원을 IaC 관리 대상으로 편입. 내부 NLB, GPU AMI, Spot ASG의 모델 준비·health check·GPU 사용률 기반 확장 정책 구성
+- **공개 진입점과 내부 접근 경계** ([FE #72](https://github.com/ureca-UBot/UBot-FE/pull/72) · [#306](https://github.com/ureca-UBot/UBot-BE/pull/306)) — 외부 사용자 요청은 FE Nginx(HTTPS)로 받고 `/api`는 VPC 사설 IP의 BE로 프록시. 보안 그룹으로 BE HTTP는 FE만, DB·Redis는 API/Worker만, GPU 추론 포트는 내부 NLB만 접근하도록 제한. BE Nginx는 FE 주소에서 전달한 클라이언트 IP만 신뢰
 - **FE·BE CI/CD와 배포 실패 복구** ([#261](https://github.com/ureca-UBot/UBot-BE/pull/261) · [FE #72](https://github.com/ureca-UBot/UBot-FE/pull/72) · [#318](https://github.com/ureca-UBot/UBot-BE/pull/318)) — GitHub Actions OIDC·ECR image digest·SSM으로 BE 배포. FE는 릴리스 링크 전환 후 검증 실패 시 이전 버전으로 복구. CD 중단으로 Worker가 사라지면 독립 systemd 타이머로 같은 digest를 복구(강제 중단은 로컬 검증)
 - **운영 지표·장애 알림** ([#268](https://github.com/ureca-UBot/UBot-BE/pull/268) · [#274](https://github.com/ureca-UBot/UBot-BE/pull/274)) — Worker 대기·실행·회수, LLM·검색·DB·Redis 메트릭을 구성하고 Prometheus 경보 6종과 런북 연결. Discord·Slack 알림·복구 통지는 로컬에서 검증
 - **장애·부하 검증** ([장애 주입](https://github.com/ureca-UBot/UBot-BE/blob/develop/docs/evidence/fault-recovery-20261023.md) · [AWS 재시험](https://github.com/ureca-UBot/UBot-ServerTest/blob/main/chat-e2e/results/20261026-aws/README.md)) — 로컬 Worker·Redis·DB·vLLM 장애별 100건의 최종 저장을 확인. AWS 3,000건씩 2회에서 HTTP 202 접수 6,000건; Nginx 502·모델 컨텍스트 초과 원인을 조정한 뒤에도 최종 시스템 오류 4건과 대기 지연은 남음
