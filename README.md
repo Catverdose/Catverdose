@@ -34,7 +34,7 @@
 - **입력 보호와 비회원 채팅** ([#104](https://github.com/ureca-UBot/UBot-BE/pull/104) · [#113](https://github.com/ureca-UBot/UBot-BE/pull/113) · [#131](https://github.com/ureca-UBot/UBot-BE/pull/131) · [FE #28](https://github.com/ureca-UBot/UBot-FE/pull/28)) — 임베딩과 LLM을 부르기 전에 금지어를 검사. 비회원은 HttpSession으로 구분하고 행 잠금으로 질문 횟수 상한을 유지하며, 로그인 후 대화를 회원에게 승계
 - **모델 서버 전환과 FAQ 검색** ([#146](https://github.com/ureca-UBot/UBot-BE/pull/146) · [#150](https://github.com/ureca-UBot/UBot-BE/pull/150) · [#153](https://github.com/ureca-UBot/UBot-BE/pull/153) · [#251](https://github.com/ureca-UBot/UBot-BE/pull/251)) — `AI_MODE` 설정으로 Ollama와 vLLM을 바꾸고, 벡터를 모델별 Profile로 저장해 백필 API로 채움. FAQ 검색은 pgvector iterative scan을 쓴 HNSW로 전환해 합성 1만 건에서 p50 4.6~6.2배 개선을 관측(실제 FAQ 재측정 전)
 
-그 밖에 상품 4종 관리 API와 화면([#157](https://github.com/ureca-UBot/UBot-BE/pull/157) · [FE #36](https://github.com/ureca-UBot/UBot-FE/pull/36)), 본인 회선 조회 API 10개([#165](https://github.com/ureca-UBot/UBot-BE/pull/165) · [FE #40](https://github.com/ureca-UBot/UBot-FE/pull/40)), 프론트 구조 분리([FE #64](https://github.com/ureca-UBot/UBot-FE/pull/64))를 맡았고, 팀원 PR 49개를 리뷰함.
+그 밖에 상품 4종 관리 API와 화면([#157](https://github.com/ureca-UBot/UBot-BE/pull/157) · [FE #36](https://github.com/ureca-UBot/UBot-FE/pull/36)), 본인 회선 조회 API 10개([#165](https://github.com/ureca-UBot/UBot-BE/pull/165) · [FE #40](https://github.com/ureca-UBot/UBot-FE/pull/40)), 프론트 구조 분리([FE #64](https://github.com/ureca-UBot/UBot-FE/pull/64))를 맡음.
 
 > 회원 인증(JWT), FAQ 관리, 매장 지도 검색은 팀원 담당
 
